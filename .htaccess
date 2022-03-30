@@ -1,0 +1,6 @@
+RewriteEngine On
+
+ReWriteCond %{REQUEST_URI} !^Public/
+RewriteCond %{REQUEST_URI} !\.(?:css|js|jpe?g|gif|png)$ [NC]
+
+RewriteRule ^(.*)$ Public/index.php?rt=$1 [L,QSA]
