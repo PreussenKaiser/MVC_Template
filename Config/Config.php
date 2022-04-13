@@ -1,16 +1,25 @@
 <?php
-/** Contains configuration settings for the project. */
-class Config
-{
-	/** @var Config The current instance of the config. */
-	private static $instance;
+namespace Config;
 
-	/** Loads project configurations. */
+use Routes\Server;
+
+/**
+ * Contains configuration settings for the project.
+ */
+final class Config
+{
+	/**
+	 * @var ?Config The current instance of the config.
+	 */
+	private static ?Config $instance = null;
+
+	/**
+	 * Loads project configurations.
+	 */
 	private function __construct()
 	{
 		$this->loadSettings();
 		$this->determineRoot();
-		$this->defineConstants();
 	}
 
 	/**
@@ -35,30 +44,19 @@ class Config
 	{
 		$settings = parse_ini_file('config.ini');
 
-		define('PROJECT_NAME', $settings['projectname']);
-		define('FRONTPAGE', $settings['frontpage']);
+		define('PROJECT_NAME', $settings['project_name']);
+		define('INDEX', $settings['index']);
 	}
 
 	/** Initializes root constant. */
 	private function determineRoot(): void
 	{
 		$path = Server::determinePath();
-		define('ROOT', str_replace('Public'.$path.'index.php', '', $_SERVER['SCRIPT_FILENAME']));
-	}
 
-	/** Creates constants for the application. */
-	private function defineConstants(): void
-	{
-		/** The upload path for files. */
-		define('UPLOAD_PATH', ROOT . 'Public/resources/uploaded_img/');
-
-		/** The maximum size for uploaded files. */
-		define("MAX_FILE_SIZE", 131072);
-
-		/** The admin username. */
-		define('AUTH_USERNAME', 'username');
-
-		/** The admin password. */
-		define('AUTH_PASSWORD', 'password');
+		define('ROOT', str_replace(
+			'Public' . $path . 'index.php',
+			'',
+			$_SERVER['SCRIPT_FILENAME']
+		));
 	}
 }

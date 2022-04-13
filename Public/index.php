@@ -1,6 +1,7 @@
 <?php
 // TODO: Use an autoloader.
-// TODO: Get CSS loaded urls to work.
+use Config\Config;
+use Routes\Dispatcher;
 
 require('../Routes/Server.php');
 require_once('../Config/Config.php');
@@ -17,5 +18,6 @@ require_once('../App/Views/View.php');
 require_once('../App/Models/Model.php');
 require_once('../Core/Database.php');
 include_once('../Core/Logger.php');
+require_once('../Core/Validator.php');
 
 Dispatcher::dispatch();

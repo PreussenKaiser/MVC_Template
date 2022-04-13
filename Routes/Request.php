@@ -1,4 +1,10 @@
 <?php
+namespace Routes;
+
+use App\Controllers\Controller;
+use Core\Logger;
+use Exception;
+
 /**
  * The class that represents a request.
  *
@@ -10,7 +16,9 @@
  */
 class Request
 {
-    /** @var string The url for the request. */
+    /**
+	 * @var string The url for the request.
+	 */
     public string $url;
 
 	/**
@@ -23,13 +31,6 @@ class Request
 	 */
     public Controller|string $controller;
 
-    /**
-	 * @var string|null
-	 * Represents the method to call in the controller.
-	 * Separated from the controller by a '?'.
-	 */
-    public $action;
-
 	/**
 	 * @var array
 	 * Represents parameters to insert into a controller's method.
@@ -37,22 +38,19 @@ class Request
 	 */
 	public array $params;
 
-	/** @var Logger The logger to log request details. */
-	private Logger $logger;
-
-    /** Initializes a new instance of a request. */
+    /**
+	 * Initializes a new instance of a request.
+	 */
     public function __construct()
     {
-		$database = Database::getInstance()->getConnection();
-		$this->logger = Logger::getInstance($database);
-
 		try
 		{
 			$this->url = $this->extractProjectRoot($_SERVER['REQUEST_URI']);
+			$this->params = array();
 		}
 		catch (Exception $ex)
 		{
-			$this->logger->error($ex->getMessage());
+			Logger::getInstance()->error('Could not find project root');
 		}
     }
 

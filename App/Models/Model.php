@@ -1,38 +1,44 @@
 <?php
-/** The class that represents a model. */
+namespace App\Models;
+
+use Core\Database;
+use Core\Logger;
+use PDO;
+
+/**
+ * The base model class.
+ *
+ * Handles the querying of a database.
+ */
 abstract class Model
 {
-	/** @var Logger The logger to use for logging model processes. */
+	/**
+	 * @var Logger The logger to use for logging model processes.
+	 */
 	protected Logger $logger;
 
-	/** @var mysqli The database connection for the model. */
-	private static $database;
+	/**
+	 * @var string The table to interface with.
+	 */
+	protected string $table;
 
-	/** @var string The table to interface with. */
-	private string $table;
+	/**
+	 * @var ?PDO The database connection for the model.
+	 */
+	private static ?PDO $connection = null;
 
 	/**
 	 * Initializes a new instance of the Model class.
-	 * @param string $table_name The table to interface with.
+	 *
+	 * @param string $table The table to interface with.
 	 */
-	public function __construct(string $table_name)
+	public function __construct(string $table)
 	{
-		if (is_null(self::$database))
-			self::$database = Database::getInstance()->getConnection();
+		if (is_null(self::$connection))
+			self::$connection = Database::getConnection();
 
-		$this->logger = Logger::getInstance(self::$database);
-		$this->table = $table_name;
-	}
-
-	/**
-	 * Gets all instances of a model.
-	 * @return iterable The result of selecting all models.
-	 */
-	public function getAll(): iterable
-	{
-		return self::$database
-			->query("SELECT * FROM $this->table")
-			->fetch_all(\PDO::FETCH_ASSOC);
+		$this->logger = Logger::getInstance();
+		$this->table = $table;
 	}
 
 	/**
@@ -49,21 +55,48 @@ abstract class Model
 		$fields = array_keys($data);
 		$values = array_values($data);
 
-		$statement = self::$database->prepare
+		$statement = self::$connection->prepare
 		(
 			"INSERT INTO $this->table 
 			(" . implode(',', $fields) . ")
-			VALUES(".implode(',', $marks).")"
+			VALUES(".implode(',', $marks).")",
 		);
 
-		$statement->bind_param
+		$statement->execute($values);
+	}
+
+	/**
+	 * Gets all instances of a model.
+	 *
+	 * Retrieved instances are indexed by their column name.
+	 *
+	 * @return iterable The result of selecting all models.
+	 */
+	public function read(): iterable
+	{
+		return self::$connection
+			->query("SELECT * FROM $this->table")
+			->fetchAll(\PDO::FETCH_ASSOC);
+	}
+
+	/**
+	 * Gets all values from a model.
+	 *
+	 * Retrieved data from the model is indexed by their column name.
+	 *
+	 * @param int $id The model to get values from.
+	 * @return iterable The values of the first occurrence of that model.
+	 */
+	public function get(int $id): iterable
+	{
+		$statement = self::$connection->prepare
 		(
-			$this->getTypes($values),
-			...$values
+			"SELECT * FROM $this->table
+			WHERE id = ?"
 		);
 
-		$statement->execute();
-		$this->logger->debug("Model inserted into $this->table");
+		$statement->execute(array($id));
+		return $statement->fetch(PDO::FETCH_ASSOC);
 	}
 
 	/**
@@ -86,60 +119,37 @@ abstract class Model
 		foreach ($fields as $field)
 			$pairs[] .= "$field = ?";
 
-		$statement = self::$database->prepare
+		$statement = self::$connection->prepare
 		(
 			"UPDATE $this->table SET " .
 			implode(',', $pairs) . " WHERE id = $id"
 		);
 
-		$statement->bind_param
-		(
-			$this->getTypes($values),
-			...$values
-		);
-
-		$statement->execute();
+		$statement->execute($values);
 		$this->logger->debug("Model updated in $this->table");
 	}
 
 	/**
 	 * Deletes a specified model.
+	 *
 	 * @param int $id The model to delete.
 	 */
 	public function delete(int $id): void
 	{
-		self::$database->query
-		(
-			"DELETE FROM $this->table WHERE id = $id"
-		);
+		self::$connection
+				->prepare("DELETE FROM $this->table WHERE id = ?")
+				->execute(array($id));
 	}
 
 	/**
 	 * Gets the database connection for the model.
-	 * @return mysqli The database for the model.
-	 */
-	protected function getDb(): mysqli
-	{
-		return self::$database;
-	}
-
-	/**
-	 * Gets the types of the values entered in.
 	 *
-	 * Used for dynamically binding types to values.
-	 * Only identifies integers and strings.
+	 * Can be called in child classes to perform custom queries.
 	 *
-	 * @param array $values The values to determine types of.
-	 * @return string The resulting string.
+	 * @return PDO The database for the model.
 	 */
-	private function getTypes(array $values): string
+	protected final function getDb(): PDO
 	{
-		$result = '';
-
-		foreach ($values as $value)
-			$result .= is_numeric($value) ? 'i' : 's';
-
-		$this->logger->debug($result);
-		return $result;
+		return self::$connection;
 	}
 }

@@ -1,15 +1,22 @@
 <?php
-/** The class that represents a view.. */
+namespace App\Views;
+
+/**
+ * The class that renders a view.
+ */
 class View
 {
 	/**
-	 * Render the view.
-	 * @param string $name The view to render.
+	 * Renders the view and injects parameters.
+	 *
+	 * @param string $view The view to render.
 	 * @param array $params Optional parameters for the view.
 	 */
-    public function render(string $name, array $params = array()): void
+    public function render(string $view, array $params = []): void
     {
+		$view = ROOT . 'App/Views/' . $view . '.php';
+
 		extract($params, EXTR_SKIP);
-        require(ROOT . 'App/Views/Layouts/' . $name . '.php');
+        require(ROOT . 'App/Views/Shared/layout.php');
     }
 }

@@ -1,5 +1,14 @@
-# Created by https://www.toptal.com/developers/gitignore/api/phpstorm,visualstudiocode,windows,macos
-# Edit at https://www.toptal.com/developers/gitignore?templates=phpstorm,visualstudiocode,windows,macos
+
+# Created by https://www.toptal.com/developers/gitignore/api/phpstorm,visualstudiocode,windows,macos,composer,phpunit
+# Edit at https://www.toptal.com/developers/gitignore?templates=phpstorm,visualstudiocode,windows,macos,composer,phpunit
+
+### Composer ###
+composer.phar
+/vendor/
+
+# Commit your application's lock file https://getcomposer.org/doc/01-basic-usage.md#commit-your-composer-lock-file-to-version-control
+# You may choose to ignore a library lock file http://getcomposer.org/doc/02-libraries.md#lock-file
+# composer.lock
 
 ### macOS ###
 # General
@@ -44,8 +53,8 @@ Temporary Items
 .idea/**/aws.xml
 
 # Generated files
-.idea/
 .idea/**/contentModel.xml
+.idea/
 
 # Sensitive or high-churn files
 .idea/**/dataSources/
@@ -139,6 +148,21 @@ fabric.properties
 # https://plugins.jetbrains.com/plugin/12206-codestream
 .idea/codestream.xml
 
+### PHPUnit ###
+# Covers PHPUnit
+# Reference: https://phpunit.de/
+
+# Generated files
+.phpunit.result.cache
+.phpunit.cache
+
+# PHPUnit
+/app/phpunit.xml
+/phpunit.xml
+
+# Build data
+/build/
+
 ### VisualStudioCode ###
 .vscode/*
 !.vscode/settings.json
@@ -186,4 +210,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.toptal.com/developers/gitignore/api/phpstorm,visualstudiocode,windows,macos
+# End of https://www.toptal.com/developers/gitignore/api/phpstorm,visualstudiocode,windows,macos,composer,phpunit

@@ -1,13 +1,19 @@
 <?php
-/** The controller that relays the error page. */
-class ErrorController extends Controller
+namespace App\Controllers;
+
+/**
+ * The controller for the error view.
+ */
+final class ErrorController extends Controller
 {
-    /** Initializes a new instance of the ErrorController controller. */
+    /**
+	 * Initializes a new instance of the ErrorController controller.
+	 */
     public function __construct()
     {
-        parent::__construct();
+        parent::__construct(array());
 
-		$this->view->render('error');
+		$this->view->render('Error/error');
 		$this->logger->error('Error controller called!');
     }
 }

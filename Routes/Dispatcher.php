@@ -1,8 +1,9 @@
 <?php
+namespace Routes;
+
+use App\Controllers\Controller;
 
 /**
- * The backbone of this MVC framework.
- *
  * Dispatches a request to their destinations.
  */
 class Dispatcher
@@ -16,12 +17,11 @@ class Dispatcher
     public static function dispatch(): void
     {
         $request = new Request();
+
         Router::parse($request);
+		$controller = self::loadController($request);
 
-        $controller = self::loadController($request);
-
-        if (!is_null($request->action))
-			$controller->{$request->action}($request->params);
+		$controller->{$request->params['action']}($request->params['args']);
     }
 
     /**
@@ -31,11 +31,11 @@ class Dispatcher
 	 * the request is assigned an ErrorController.
 	 *
 	 * @param Request The request to load the controller for.
-     * @return Controller|ErrorController The controller for that request.
+	 * @return Controller
      */
-    private static function loadController(Request $request): Controller|ErrorController
+    private static function loadController(Request $request): Controller
     {
-        $name = $request->controller . 'Controller';
+        $name = ucfirst($request->controller) . 'Controller';
         $file = ROOT . 'App/Controllers/' . $name . '.php';
 
         if (file_exists($file))
@@ -48,6 +48,9 @@ class Dispatcher
             $name = 'ErrorController';
         }
 
-        return new $name();
+		// prepends namespace.
+		$name = 'App\\Controllers\\' . $name;
+
+        return new $name($request->params);
     }
 }

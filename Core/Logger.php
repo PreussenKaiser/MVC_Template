@@ -1,4 +1,8 @@
 <?php
+namespace Core;
+
+use PDO;
+
 /**
  * Contains a singleton for logging.<br>
  * Debug: 0, Info: 1<br>
@@ -6,40 +10,47 @@
  */
 class Logger
 {
-    /** @var Logger The current class instance. */
-    private static $instance;
+    /**
+	 * @var ?Logger The current class instance.
+	 */
+    private static ?Logger $instance = null;
 
-    /** @var mysqli The log database connection. */
-    private static mysqli $database;
+    /**
+	 * @var ?PDO The log database connection.
+	 */
+    private static ?PDO $connection = null;
 
-    /** @var string The table to store logs in. */
+    /**
+	 * @var string The table to store logs in.
+	 */
     private string $table_name;
 
 	/**
 	 * Initializes a new instance of the Logger singleton.
-	 * @param mysqli $database The database connection to log to.
 	 */
-    private function __construct(mysqli $database)
+    private function __construct()
     {
-		self::$database = $database;
+		self::$connection = Database::getConnection();
 
 		$this->loadSettings();
     }
 
     /**
      * Gets the current logger instance.
-	 * @param mysqli $database The database connection to log to.
+	 *
      * @return Logger The current instance.
      */
-    public static function getInstance(mysqli $database): Logger
+    public static function getInstance(): Logger
     {
         if (is_null(self::$instance))
-            self::$instance = new self($database);
+            self::$instance = new self();
 
         return self::$instance;
     }
 
-    /** Loads settings from log_settings.ini */
+    /**
+	 * Loads settings from log_settings.ini
+	 */
     private function loadSettings(): void
     {
         $settings = parse_ini_file('../Config/config.ini');
@@ -49,6 +60,7 @@ class Logger
 
     /**
 	 * Writes a debug message.
+	 *
      * @param string $message The message to write.
      */
     public function debug(string $message): void
@@ -58,6 +70,7 @@ class Logger
 
     /**
 	 * Writes an info message.
+	 *
      * @param string $message The message to write.
      */
     public function info(string $message): void
@@ -67,6 +80,7 @@ class Logger
 
     /**
 	 * Writes a warning message.
+	 *
      * @param string $message The message to write.
      */
     public function warning(string $message): void
@@ -76,6 +90,7 @@ class Logger
 
     /**
 	 * Writes an error message.
+	 *
      * @param string $message The message to write.
      */
     public function error(string $message): void
@@ -85,15 +100,14 @@ class Logger
 
     /**
      * Writes the message and log level.
+	 *
      * @param string $message The message to write.
      * @param int $log_level The log severity.
      */
     private function writeMessage(string $message, int $log_level): void
     {
-        if ($statement = self::$database->prepare("INSERT INTO $this->table_name (message, log_level) VALUES(?,?)"))
-        {
-            $statement->bind_param('si', $message, $log_level);
-            $statement->execute();
-        }
+		self::$connection
+			->prepare("INSERT INTO $this->table_name (message, level) VALUES(?,?)")
+			?->execute(array($message, $log_level));
     }
 }
