@@ -1,9 +1,21 @@
 {
-    "require-dev": {
-        "phpunit/phpunit": "^9"
-    },
   "require": {
     "ext-pdo": "*",
         "twbs/bootstrap": "5.0.2"
+  },
+
+  "autoload": {
+    "classmap": [
+      "Config", "Routes",
+      "Core",
+      "Core/Validation",
+      "Core/Validation/Inputs",
+      "App/Controllers",
+      "App/Models",
+      "App/Views"
+    ]
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9"
   }
 }
