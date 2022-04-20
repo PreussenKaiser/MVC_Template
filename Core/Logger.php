@@ -1,4 +1,5 @@
 <?php
+
 namespace Core;
 
 use PDO;
@@ -8,7 +9,7 @@ use PDO;
  * Debug: 0, Info: 1<br>
  * Warning: 2, Error: 3
  */
-class Logger
+final class Logger
 {
     /**
 	 * @var ?Logger The current class instance.
@@ -42,8 +43,9 @@ class Logger
      */
     public static function getInstance(): Logger
     {
-        if (is_null(self::$instance))
-            self::$instance = new self();
+        if (is_null(self::$instance)) {
+			self::$instance = new self();
+		}
 
         return self::$instance;
     }
@@ -102,12 +104,15 @@ class Logger
      * Writes the message and log level.
 	 *
      * @param string $message The message to write.
-     * @param int $log_level The log severity.
+     * @param int $level The log severity.
      */
-    private function writeMessage(string $message, int $log_level): void
+    private function writeMessage(string $message, int $level): void
     {
 		self::$connection
-			->prepare("INSERT INTO $this->table_name (message, level) VALUES(?,?)")
-			?->execute(array($message, $log_level));
+			->prepare(
+				"INSERT INTO $this->table_name (level, message, date) 
+				VALUES(?, ?, NOW())"
+			)
+			?->execute(array($level, $message));
     }
 }

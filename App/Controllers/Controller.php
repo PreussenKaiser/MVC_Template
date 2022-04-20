@@ -3,7 +3,7 @@ namespace App\Controllers;
 
 use App\Views\View;
 use Core\Logger;
-use Core\Validator;
+use Core\Validation\Form;
 
 /**
  * The base controller class.
@@ -21,9 +21,9 @@ abstract class Controller
 	protected Logger $logger;
 
 	/**
-	 * @var Validator The class to use for form validation.
+	 * @var Form The class to use for form validation.
 	 */
-	protected Validator $validator;
+	protected Form $form;
 
 	/**
 	 * Initializes a new instance of the Controller class.
@@ -34,7 +34,7 @@ abstract class Controller
     {
 		$this->logger = Logger::getInstance();
 		$this->view = new View();
-		$this->validator = new Validator();
+		$this->form = new Form();
 	}
 
 	/**
