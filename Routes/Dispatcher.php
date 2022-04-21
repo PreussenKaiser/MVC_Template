@@ -1,4 +1,5 @@
 <?php
+
 namespace Routes;
 
 use App\Controllers\Controller;
@@ -12,16 +13,16 @@ class Dispatcher
 	 * Parses the current request.
 	 *
 	 * Requests have this structure minus root:<br>
-	 * [viewname]?[method_call]?[parameters]
+	 * [view_name]?[method_call]?[parameters]
 	 */
     public static function dispatch(): void
     {
         $request = new Request();
-
         Router::parse($request);
-		$controller = self::loadController($request);
 
-		$controller->{$request->params['action']}($request->params['args']);
+		// calls the controller
+		self::loadController($request)
+			->{$request->getAction()}($request->getParams());
     }
 
     /**
@@ -31,19 +32,17 @@ class Dispatcher
 	 * the request is assigned an ErrorController.
 	 *
 	 * @param Request The request to load the controller for.
-	 * @return Controller
+	 * @return Controller The request's controller.
      */
     private static function loadController(Request $request): Controller
     {
-        $name = ucfirst($request->controller) . 'Controller';
+        $name = ucfirst($request->getController()) . 'Controller';
         $file = ROOT . 'App/Controllers/' . $name . '.php';
 
-        if (file_exists($file))
-        {
+        if (file_exists($file)) {
             require($file);
         }
-        else
-        {
+        else {
             require(ROOT . 'App/Controllers/ErrorController.php');
             $name = 'ErrorController';
         }
@@ -51,6 +50,6 @@ class Dispatcher
 		// prepends namespace.
 		$name = 'App\\Controllers\\' . $name;
 
-        return new $name($request->params);
+        return new $name($request->getParams());
     }
 }

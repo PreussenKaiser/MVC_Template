@@ -1,4 +1,5 @@
 <?php
+
 namespace Routes;
 
 use App\Controllers\Controller;
@@ -9,17 +10,17 @@ use Exception;
  * The class that represents a request.
  *
  * Requests have this structure minus root:<br>
- * [view_name]?[method_call]?[method_parameters].
+ * [view_name]@[method_call]?[method_parameters].
  *
  * As of now, requests can only be one directory deep from root
- * else navigation breaks.
+ * or else navigation breaks.
  */
 class Request
 {
     /**
 	 * @var string The url for the request.
 	 */
-    public string $url;
+    private string $url;
 
 	/**
 	 * @var Controller|string
@@ -29,30 +30,89 @@ class Request
 	 * While processing the controller,
 	 * a string will be temporarily assigned to this field.
 	 */
-    public Controller|string $controller;
+    private Controller|string $controller;
+
+	/**
+	 * @var string The action to execute in a controller.
+	 */
+	private string $action;
 
 	/**
 	 * @var array
 	 * Represents parameters to insert into a controller's method.
 	 * Separated from the action by a '?'.
 	 */
-	public array $params;
+	private array $params;
 
     /**
 	 * Initializes a new instance of a request.
 	 */
     public function __construct()
     {
-		try
-		{
+		try {
 			$this->url = $this->extractProjectRoot($_SERVER['REQUEST_URI']);
+			$this->action = INDEX;
 			$this->params = array();
 		}
-		catch (Exception $ex)
-		{
+		catch (Exception $ex) {
 			Logger::getInstance()->error('Could not find project root');
 		}
     }
+
+	/**
+	 * Gets the request's url.
+	 *
+	 * @return string The url for the request.
+	 */
+	public function getUrl(): string
+	{
+		return $this->url;
+	}
+
+	/**
+	 * Gets the request's controller.
+	 *
+	 * @return string The controller for the request.
+	 */
+	public function getController(): string
+	{
+		return $this->controller;
+	}
+
+	/**
+	 * Gets the request's action.
+	 *
+	 * @return string The method to call in the request's controller.
+	 */
+	public function getAction(): string
+	{
+		return $this->action;
+	}
+
+	/**
+	 * Gets the request's parameters.
+	 *
+	 * @return array The parameters for the controller action.
+	 */
+	public function getParams(): array
+	{
+		return $this->params;
+	}
+
+	/**
+	 * Sets request properties.
+	 *
+	 * @param string $controller The request's controller.
+	 * @param string $action The controller method to execute.
+	 * @param array $params The parameters for the method.
+	 */
+	public function setProperties(string $controller = INDEX, string $action = 'index',
+								  array $params = []): void
+	{
+		$this->controller = $controller;
+		$this->action = $action;
+		$this->params = $params;
+	}
 
 	/**
 	 * Finds the project root and returns the url from it.
@@ -70,9 +130,10 @@ class Request
 
 		// Will break if the search term isn't found,
 		// but it'd break farther down anyway.
-		for ($i = 0; $i < count($url); $i++)
+		for ($i = 0; $i < count($url); $i++) {
 			if ($url[$i] == PROJECT_NAME)
 				return implode('/', array_slice($url, $i));
+		}
 
 		throw new Exception('Project root was not found!');
 	}

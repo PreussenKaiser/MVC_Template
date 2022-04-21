@@ -1,39 +1,58 @@
 <?php
+
 namespace Routes;
 
 /**
- * Routes a request to it's controller.
+ * The class that parse a request and assigns its properties.
  */
 class Router
 {
-    /**
-     * Assigns a request to it's controller.
+	/**
+	 * Assigns request properties.
 	 *
-     * @param Request $request The request to route.
-     */
-    public static function parse(Request $request): void
-    {
-        $url = rtrim($request->url, '/');
-		$exploded_url = explode('/', $url);
-		$controller = end($exploded_url);
+	 * @param Request $request The request to parse.
+	 */
+	public static function parse(Request $request): void
+	{
+		// removes trailing '/'
+		$url = rtrim($request->getUrl(), '/');
 
-		if ($controller == PROJECT_NAME)
-		{
-			$request->controller = INDEX;
-			$request->params = array(
-				'action' => INDEX,
-				'args' => array()
-			);
+		$exploded_url = explode('/', $url);
+		$args = end($exploded_url);
+
+		// when loading in there are no arguments
+		if ($args == PROJECT_NAME) {
+			$request->setProperties();
 
 			return;
 		}
 
-		$params = array_slice(explode('?', $controller), 1);
-
-		$request->controller = explode('?', $controller)[0];
-		$request->params = array(
-			'action' => $params[0] ?? '',
-			'args' => array_slice($params, 1) ?? ''
+		$request->setProperties(
+			...self::parseArgs($args)
 		);
-    }
+	}
+
+	/**
+	 * Gets the controller, action and parameters from url arguments.
+	 **
+	 * @param string $arguments The arguments to extract request properties from.
+	 * @return array The found controller.
+	 */
+	private static function parseArgs(string $arguments): array
+	{
+		// example url: home@index?1?hello
+
+		// explodes into array and takes the first index: 'home'
+		$controller = explode('@', $arguments)[0];
+
+		// splits args by the '@', selects the last index: 'index?1?hello'
+		// the it's split by '?', selecting the first index: 'index'
+		$action = explode('?', explode('@', $arguments)[1])[0];
+
+		// splits args by '?': [home@index, 1, hello]
+		// removes the first index: [1, hello]
+		$params = array_slice(explode('?', $arguments), 1);
+
+		return [$controller, $action, $params];
+	}
 }
