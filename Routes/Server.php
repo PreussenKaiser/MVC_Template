@@ -14,7 +14,6 @@ class Server
 	 * Finds out what directory path to use.
 	 *
 	 * Currently, only determines paths for Microsoft-IIS and everything else
-	 * <br>
 	 * (assuming the latter is styled after Apache).
 	 *
 	 * @return string The appropriate directory path for the server software.

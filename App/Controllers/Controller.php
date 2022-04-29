@@ -1,12 +1,12 @@
 <?php
+
 namespace App\Controllers;
 
 use App\Views\View;
-use Core\Logger;
-use Core\Validation\Form;
+use Core\Services\Logger;
 
 /**
- * The base controller class.
+ * The base controller.
  */
 abstract class Controller
 {
@@ -21,20 +21,12 @@ abstract class Controller
 	protected Logger $logger;
 
 	/**
-	 * @var Form The class to use for form validation.
-	 */
-	protected Form $form;
-
-	/**
 	 * Initializes a new instance of the Controller class.
-	 *
-	 * @param array $params The parameters for the controller.
 	 */
-	protected function __construct(array $params)
+	protected function __construct()
     {
 		$this->logger = Logger::getInstance();
-		$this->view = new View();
-		$this->form = new Form();
+		$this->view = new View;
 	}
 
 	/**
@@ -49,29 +41,8 @@ abstract class Controller
 	{
 		$method = $name . 'Action';
 
-		if (method_exists($this, $method))
+		if (method_exists($this, $method)) {
 			call_user_func_array([$this, $method], ...$args);
-	}
-
-	/**
-	 * Builds a table.
-	 *
-	 * Once called, the table should be followed by a closing tag.
-	 *
-	 * @param array $cols The column names for the table.
-	 * @return string A table with a completed header and opening body tag.
-	 */
-	protected final function buildTable(array $cols): string
-	{
-		$table =	"<table class='table text-white'>
-						<thead>
-							<tr>";
-							foreach ($cols as $col)
-								$table .= "<th scope='col'>$col</th>";
-		$table .=			"</tr>
-						</thead>
-						<tbody>";
-
-		return $table;
+		}
 	}
 }

@@ -1,8 +1,10 @@
 <?php
+
 namespace App\Models;
 
-use Core\Database;
-use Core\Logger;
+use Core\Services\Database;
+use Core\Services\Logger;
+
 use PDO;
 
 /**
@@ -29,20 +31,23 @@ abstract class Model
 
 	/**
 	 * Initializes a new instance of the Model class.
+	 * 
+	 * Sets the database table to interface with for the subclass.
 	 *
-	 * @param string $table The table to interface with.
+	 * @param string $table The table to query for.
 	 */
 	public function __construct(string $table)
 	{
-		if (is_null(self::$connection))
+		if (is_null(self::$connection)) {
 			self::$connection = Database::getConnection();
+		}
 
 		$this->logger = Logger::getInstance();
 		$this->table = $table;
 	}
 
 	/**
-	 * Creates the model in the database.<br>
+	 * Creates the model in the database.
 	 * Data entered is in the form of key-value pair.
 	 *
 	 * For example: 'first_name' => 'john'
@@ -51,12 +56,16 @@ abstract class Model
 	 */
 	public function create(array $data): void
 	{
+		// creates question marks for each value
 		$marks = array_fill(0, count($data), '?');
+
+		// the fields to create
 		$fields = array_keys($data);
+
+		// the values to supply those fields
 		$values = array_values($data);
 
-		$statement = self::$connection->prepare
-		(
+		$statement = self::$connection->prepare(
 			"INSERT INTO $this->table 
 			(" . implode(',', $fields) . ")
 			VALUES(".implode(',', $marks).")",
@@ -76,7 +85,7 @@ abstract class Model
 	{
 		return self::$connection
 			->query("SELECT * FROM $this->table")
-			->fetchAll(\PDO::FETCH_ASSOC);
+			->fetchAll(PDO::FETCH_ASSOC);
 	}
 
 	/**
@@ -89,21 +98,20 @@ abstract class Model
 	 */
 	public function get(int $id): iterable
 	{
-		$statement = self::$connection->prepare
-		(
+		$statement = self::$connection->prepare(
 			"SELECT * FROM $this->table
 			WHERE id = ?"
 		);
 
-		$statement->execute(array($id));
+		$statement->execute([$id]);
 		return $statement->fetch(PDO::FETCH_ASSOC);
 	}
 
 	/**
 	 * Updates a model in the database.
 	 *
-	 * The ID specifies the model to update.<br>
-	 * Data entered is in the form of key-value pair.
+	 * The ID specifies the model to update.
+	 * Data entered is in the form of a key-value pair.
 	 *
 	 * For example: 'first_name' => 'john'
 	 *
@@ -112,15 +120,18 @@ abstract class Model
 	 */
 	public function update(int $id, array $data): void
 	{
+		// the fields to update
 		$fields = array_keys($data);
-		$values = array_values($data);
-		$pairs = array();
 
+		// the values to put in those fields
+		$values = array_values($data);
+
+		// pairs fields to a '?' for sanitization
+		$pairs = [];
 		foreach ($fields as $field)
 			$pairs[] .= "$field = ?";
 
-		$statement = self::$connection->prepare
-		(
+		$statement = self::$connection->prepare(
 			"UPDATE $this->table SET " .
 			implode(',', $pairs) . " WHERE id = $id"
 		);
@@ -138,7 +149,7 @@ abstract class Model
 	{
 		self::$connection
 				->prepare("DELETE FROM $this->table WHERE id = ?")
-				->execute(array($id));
+				->execute([$id]);
 	}
 
 	/**
@@ -148,7 +159,7 @@ abstract class Model
 	 *
 	 * @return PDO The database for the model.
 	 */
-	protected final function getDb(): PDO
+	protected final function getConnection(): PDO
 	{
 		return self::$connection;
 	}

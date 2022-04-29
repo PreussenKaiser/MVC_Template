@@ -20,7 +20,7 @@ class Router
 		$exploded_url = explode('/', $url);
 		$args = end($exploded_url);
 
-		// when loading in there are no arguments
+		// when there are no arguments
 		if ($args == PROJECT_NAME) {
 			$request->setProperties();
 
@@ -40,7 +40,7 @@ class Router
 	 */
 	private static function parseArgs(string $arguments): array
 	{
-		// example url: home@index?1?hello
+		// * example url: home@index?1?hello
 
 		// explodes into array and takes the first index: 'home'
 		$controller = explode('@', $arguments)[0];

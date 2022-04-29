@@ -14,7 +14,7 @@ class View
 	 */
     public function render(string $view, array $params = []): void
     {
-		$view = ROOT . 'App/Views/' . $view . '.php';
+		$view = ROOT . "App/Views/$view.php";
 
 		extract($params, EXTR_SKIP);
         require(ROOT . 'App/Views/Shared/layout.php');

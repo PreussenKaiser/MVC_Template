@@ -1,12 +1,12 @@
 <?php
 
-namespace Core;
+namespace Core\Services;
 
 use PDO;
 
 /**
- * Contains a singleton for logging.<br>
- * Debug: 0, Info: 1<br>
+ * Contains a singleton for logging.
+ * Debug: 0, Info: 1,
  * Warning: 2, Error: 3
  */
 final class Logger
@@ -98,6 +98,16 @@ final class Logger
     public function error(string $message): void
     {
         $this->writeMessage($message, 3);
+    }
+
+    /**
+     * Converts the Logger class into a string.
+     * 
+     * @return string The string representation of the Logger.
+     */
+    public function __toString(): string
+    {
+        return Logger::class;
     }
 
     /**

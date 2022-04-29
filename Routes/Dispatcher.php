@@ -12,12 +12,12 @@ class Dispatcher
 	/**
 	 * Parses the current request.
 	 *
-	 * Requests have this structure minus root:<br>
+	 * Requests have this structure minus root:
 	 * [view_name]?[method_call]?[parameters]
 	 */
-    public static function dispatch(): void
+    public function dispatch(): void
     {
-        $request = new Request();
+        $request = new Request;
         Router::parse($request);
 
 		// calls the controller
@@ -36,7 +36,13 @@ class Dispatcher
      */
     private static function loadController(Request $request): Controller
     {
+        // * example: requested controller is 'home'
+
+        // 'home' -> 'HomeController'
         $name = ucfirst($request->getController()) . 'Controller';
+
+        // 'HomeController' ->
+        // 'C:/(your_file_structure)/(project_name)/App/Controllers/HomeController.php'
         $file = ROOT . 'App/Controllers/' . $name . '.php';
 
         if (file_exists($file)) {
@@ -50,6 +56,6 @@ class Dispatcher
 		// prepends namespace.
 		$name = 'App\\Controllers\\' . $name;
 
-        return new $name($request->getParams());
+        return new $name();
     }
 }

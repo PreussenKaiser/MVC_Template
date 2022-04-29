@@ -3,7 +3,7 @@
 namespace Routes;
 
 use App\Controllers\Controller;
-use Core\Logger;
+
 use Exception;
 
 /**
@@ -23,12 +23,11 @@ class Request
     private string $url;
 
 	/**
-	 * @var Controller|string
 	 * Represents the request's controller.
-	 * Located one directory away from root.
-	 * <br>
+	 * 
 	 * While processing the controller,
 	 * a string will be temporarily assigned to this field.
+	 * @var Controller|string
 	 */
     private Controller|string $controller;
 
@@ -38,25 +37,20 @@ class Request
 	private string $action;
 
 	/**
-	 * @var array
 	 * Represents parameters to insert into a controller's method.
 	 * Separated from the action by a '?'.
+	 * @var array
 	 */
 	private array $params;
 
     /**
-	 * Initializes a new instance of a request.
+	 * Initializes a new instance of the Request class.
 	 */
     public function __construct()
     {
-		try {
-			$this->url = $this->extractProjectRoot($_SERVER['REQUEST_URI']);
-			$this->action = INDEX;
-			$this->params = array();
-		}
-		catch (Exception $ex) {
-			Logger::getInstance()->error('Could not find project root');
-		}
+		$this->url = $this->extractProjectRoot($_SERVER['REQUEST_URI']);
+		$this->action = INDEX;
+		$this->params = array();
     }
 
 	/**
@@ -101,6 +95,8 @@ class Request
 
 	/**
 	 * Sets request properties.
+	 * 
+	 * Default parameters point to the index page.
 	 *
 	 * @param string $controller The request's controller.
 	 * @param string $action The controller method to execute.
@@ -117,7 +113,7 @@ class Request
 	/**
 	 * Finds the project root and returns the url from it.
 	 *
-	 * Runs incrementally from the file root.<br>
+	 * Runs incrementally from the file root.
 	 * Might be faster to run decrementally.
 	 *
 	 * @param string $url The project url.
@@ -128,8 +124,8 @@ class Request
 	{
 		$url = explode('/', $url);
 
-		// Will break if the search term isn't found,
-		// but it'd break farther down anyway.
+		// ! will break if the search term isn't found,
+		// ! but it'd break farther down anyway
 		for ($i = 0; $i < count($url); $i++) {
 			if ($url[$i] == PROJECT_NAME)
 				return implode('/', array_slice($url, $i));

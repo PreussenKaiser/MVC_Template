@@ -2,9 +2,10 @@
 
 namespace Core\Tests;
 
-use PHPUnit\Framework\TestCase;
 use Core\Validation\Form;
 use Core\Validation\Inputs\TextInput;
+
+use PHPUnit\Framework\TestCase;
 
 /**
  * The test for the form class.
@@ -33,14 +34,16 @@ final class FormTest extends TestCase
 	{
 		$this->assertEquals(
 			'',
-			$this->form->buildForm()
+			$this->form
+				->buildForm()
 				->addInput(new TextInput('Username', 'PKaiser', 32))
 				->validateForm()
 		);
 
 		$this->assertEquals(
 			'',
-			$this->form->buildForm()
+			$this->form
+				->buildForm()
 				->addInput(new TextInput('Username', 'PKaiser123', 32))
 				->validateForm()
 		);
@@ -58,7 +61,8 @@ final class FormTest extends TestCase
 
 		$this->assertEquals(
 			"$name: Please enter a value",
-			$this->form->buildForm()
+			$this->form
+				->buildForm()
 				->addInput(new TextInput('Password', $empty, $max_value))
 				->validateForm()
 		);
@@ -66,7 +70,8 @@ final class FormTest extends TestCase
 		$this->assertEquals(
 			"$name: Length should be less than or equal to
 				$max_value characters long",
-			$this->form->buildForm()
+			$this->form
+				->buildForm()
 				->addInput(new TextInput('Password', $overflow, $max_value))
 				->validateForm()
 		);

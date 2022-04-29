@@ -6,13 +6,8 @@
 
   "autoload": {
     "classmap": [
-      "Config", "Routes",
-      "Core",
-      "Core/Validation",
-      "Core/Validation/Inputs",
-      "App/Controllers",
-      "App/Models",
-      "App/Views"
+      "App", "Config",
+      "Core", "Routes"
     ]
   },
   "require-dev": {

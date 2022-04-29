@@ -1,12 +1,13 @@
 <?php
-namespace Core;
+
+namespace Core\Services;
 
 use PDO;
 
 /**
  * Contains a singleton for the database connection.
  */
-final class Database
+class Database
 {
     /**
 	 * @var ?Database The current instance of the class.
