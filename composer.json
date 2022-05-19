@@ -1,7 +1,9 @@
 {
   "require": {
     "ext-pdo": "*",
-        "twbs/bootstrap": "5.0.2"
+        "twbs/bootstrap": "5.0.2",
+    "php-di/php-di": "^6.4",
+    "tinymce/tinymce": "^6.0"
   },
 
   "autoload": {

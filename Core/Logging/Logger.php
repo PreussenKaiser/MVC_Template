@@ -1,15 +1,20 @@
 <?php
 
-namespace Core\Services;
+namespace Core\Logging;
 
-use PDO;
+use App\Services\Database\Database;
+use App\Services\Database\MySqlDatabase;
 
 /**
  * Contains a singleton for logging.
+ * 
  * Debug: 0, Info: 1,
  * Warning: 2, Error: 3
+ * 
+ * @uses Database The database to log to.
+ * @author PreussenKaiser
  */
-final class Logger
+final class Logger implements LoggerInterface
 {
     /**
 	 * @var ?Logger The current class instance.
@@ -17,9 +22,9 @@ final class Logger
     private static ?Logger $instance = null;
 
     /**
-	 * @var ?PDO The log database connection.
-	 */
-    private static ?PDO $connection = null;
+     * @var Database The database to log to.
+     */
+    private Database $database;
 
     /**
 	 * @var string The table to store logs in.
@@ -31,9 +36,9 @@ final class Logger
 	 */
     private function __construct()
     {
-		self::$connection = Database::getConnection();
+        $this->loadSettings();
 
-		$this->loadSettings();
+		$this->database = new MySqlDatabase($this->table_name);
     }
 
     /**
@@ -61,7 +66,7 @@ final class Logger
     }
 
     /**
-	 * Writes a debug message.
+	 * Writes a debug message to the database.
 	 *
      * @param string $message The message to write.
      */
@@ -71,7 +76,7 @@ final class Logger
     }
 
     /**
-	 * Writes an info message.
+	 * Writes an info message to the database.
 	 *
      * @param string $message The message to write.
      */
@@ -81,7 +86,7 @@ final class Logger
     }
 
     /**
-	 * Writes a warning message.
+	 * Writes a warning message to the database.
 	 *
      * @param string $message The message to write.
      */
@@ -91,7 +96,7 @@ final class Logger
     }
 
     /**
-	 * Writes an error message.
+	 * Writes an error message to the database.
 	 *
      * @param string $message The message to write.
      */
@@ -118,7 +123,8 @@ final class Logger
      */
     private function writeMessage(string $message, int $level): void
     {
-		self::$connection
+		$this->database
+            ->getConnection()
 			->prepare(
 				"INSERT INTO $this->table_name (level, message, date) 
 				VALUES(?, ?, NOW())"

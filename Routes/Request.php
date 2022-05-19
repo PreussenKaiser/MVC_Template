@@ -14,6 +14,8 @@ use Exception;
  *
  * As of now, requests can only be one directory deep from root
  * or else navigation breaks.
+ * 
+ * @author PreussenKaiser
  */
 class Request
 {
@@ -50,7 +52,7 @@ class Request
     {
 		$this->url = $this->extractProjectRoot($_SERVER['REQUEST_URI']);
 		$this->action = INDEX;
-		$this->params = array();
+		$this->params = [];
     }
 
 	/**

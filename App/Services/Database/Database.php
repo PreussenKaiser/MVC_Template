@@ -1,57 +1,44 @@
 <?php
 
-namespace App\Models;
-
-use Core\Services\Database;
-use Core\Services\Logger;
+namespace App\Services\Database;
 
 use PDO;
 
 /**
- * The base model class.
- *
- * Handles the querying of a database.
+ * The class which defines base database behavior.
+ * 
+ * @author PreussenKaiser
+ * @uses PDO To establish a database connection.
  */
-abstract class Model
+abstract class Database
 {
 	/**
-	 * @var Logger The logger to use for logging model processes.
+	 * @var string The table to query.
 	 */
-	protected Logger $logger;
+	public string $table;
 
-	/**
-	 * @var string The table to interface with.
-	 */
-	protected string $table;
+    /**
+     * @var PDO The connection to establish.
+     */
+    protected static PDO $connection;
 
-	/**
-	 * @var ?PDO The database connection for the model.
-	 */
-	private static ?PDO $connection = null;
-
-	/**
-	 * Initializes a new instance of the Model class.
-	 * 
-	 * Sets the database table to interface with for the subclass.
-	 *
-	 * @param string $table The table to query for.
-	 */
-	public function __construct(string $table)
-	{
-		if (is_null(self::$connection)) {
-			self::$connection = Database::getConnection();
-		}
-
-		$this->logger = Logger::getInstance();
+    /**
+     * Initializes a new instance of the base Database class.
+     * 
+     * @param PDO $connection The connection to the database.
+	 * @param string The table to query.
+     */
+    public function __construct(PDO $connection, string $table)
+    {
+		self::$connection = $connection;
 		$this->table = $table;
-	}
+    }
 
-	/**
+    /**
 	 * Creates the model in the database.
 	 * Data entered is in the form of key-value pair.
 	 *
-	 * For example: 'first_name' => 'john'
-	 *
+	 * @example Model 'first_name' => 'john'
 	 * @param array $data The parameters to insert.
 	 */
 	public function create(array $data): void
@@ -93,14 +80,15 @@ abstract class Model
 	 *
 	 * Retrieved data from the model is indexed by their column name.
 	 *
-	 * @param int $id The model to get values from.
-	 * @return iterable The values of the first occurrence of that model.
+	 * @paramt $id The model to get values from.
+	 * @return iterable|false The values of the first occurrence of that model,
+	 * 					      false if the model wasn't found.
 	 */
-	public function get(int $id): iterable
+	public function get(int $id): iterable|false
 	{
 		$statement = self::$connection->prepare(
 			"SELECT * FROM $this->table
-			WHERE id = ?"
+			 WHERE id = ?"
 		);
 
 		$statement->execute([$id]);
@@ -113,9 +101,8 @@ abstract class Model
 	 * The ID specifies the model to update.
 	 * Data entered is in the form of a key-value pair.
 	 *
-	 * For example: 'first_name' => 'john'
-	 *
 	 * @param int $id The model to update.
+	 * @example Model 'first_name' => 'john'
 	 * @param array $data The columns (keys) to update with fields (values).
 	 */
 	public function update(int $id, array $data): void
@@ -137,7 +124,6 @@ abstract class Model
 		);
 
 		$statement->execute($values);
-		$this->logger->debug("Model updated in $this->table");
 	}
 
 	/**
@@ -153,13 +139,11 @@ abstract class Model
 	}
 
 	/**
-	 * Gets the database connection for the model.
+	 * Gets the database connection.
 	 *
-	 * Can be called in child classes to perform custom queries.
-	 *
-	 * @return PDO The database for the model.
+	 * @return PDO The connection to establish.
 	 */
-	protected final function getConnection(): PDO
+	public final function getConnection(): PDO
 	{
 		return self::$connection;
 	}

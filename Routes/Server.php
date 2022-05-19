@@ -7,6 +7,8 @@ namespace Routes;
  *
  * Right now it only determines what path to take
  * in IIS and Apache servers.
+ * 
+ * @author PreussenKaiser
  */
 class Server
 {

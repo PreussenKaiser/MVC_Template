@@ -4,6 +4,8 @@ namespace Routes;
 
 /**
  * The class that parse a request and assigns its properties.
+ * 
+ * @author PreussenKaiser
  */
 class Router
 {
@@ -23,6 +25,7 @@ class Router
 		// when there are no arguments
 		if ($args == PROJECT_NAME) {
 			$request->setProperties();
+
 
 			return;
 		}

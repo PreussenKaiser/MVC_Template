@@ -1,9 +1,9 @@
 <?php
 
-use Config\Bootstrap;
+use Config\Program;
 
 // autoloader
 require_once __DIR__ . '/../vendor/autoload.php';
 
-$bootstrap = new Bootstrap();
-$bootstrap->init();
+$program = new Program();
+$program->init();

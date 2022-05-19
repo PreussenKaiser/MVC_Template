@@ -6,8 +6,11 @@ use Routes\Server;
 
 /**
  * Contains configuration settings for the project.
+ * Called in the Program class to bootstrap configuration.
+ * 
+ * @author PreussenKaiser
  */
-final class App
+final class Config
 {
 	/**
 	 * Loads configurations.
@@ -49,11 +52,16 @@ final class App
 
 	/**
 	 * Initializes root constant.
+	 * 
+	 * @uses Server To determine where the project root is.
 	 */
 	private static function determineRoot(): void
 	{
 		$path = Server::determinePath();
 
+		/**
+		 * Defines project root.
+		 */
 		define('ROOT',
 			str_replace(
 			    'Public' . $path . 'index.php',

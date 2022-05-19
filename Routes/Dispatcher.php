@@ -3,9 +3,12 @@
 namespace Routes;
 
 use App\Controllers\Controller;
+use Core\Exceptions\UnknownRequestException;
 
 /**
  * Dispatches a request to their destinations.
+ * 
+ * @author PreussenKaiser
  */
 class Dispatcher
 {
@@ -33,29 +36,28 @@ class Dispatcher
 	 *
 	 * @param Request The request to load the controller for.
 	 * @return Controller The request's controller.
+     * @throws UnknownRequestException If the request has an unknown controller.
      */
     private static function loadController(Request $request): Controller
     {
         // * example: requested controller is 'home'
 
-        // 'home' -> 'HomeController'
+        // 'home':
+        // 'HomeController'
         $name = ucfirst($request->getController()) . 'Controller';
 
-        // 'HomeController' ->
+        // 'HomeController':
         // 'C:/(your_file_structure)/(project_name)/App/Controllers/HomeController.php'
         $file = ROOT . 'App/Controllers/' . $name . '.php';
 
-        if (file_exists($file)) {
-            require($file);
-        }
-        else {
-            require(ROOT . 'App/Controllers/ErrorController.php');
-            $name = 'ErrorController';
+        if (!file_exists($file)) {
+            throw new UnknownRequestException('Could not find controller');
         }
 
-		// prepends namespace.
-		$name = 'App\\Controllers\\' . $name;
+        // prepends namespace.
+        $name = 'App\\Controllers\\' . $name;
 
+        require($file);
         return new $name();
     }
 }
