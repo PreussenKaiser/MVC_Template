@@ -36,11 +36,11 @@ final class Router
 
 	/**
 	 * Gets the controller, action and parameters from url arguments.
-	 **
+	 *
 	 * @param string $arguments The arguments to extract request properties from.
-	 * @return array The found controller.
+	 * @return iterable The found controller.
 	 */
-	private static function parseArgs(string $arguments): array
+	private static function parseArgs(string $arguments): iterable
 	{
 		// * example url: home@index?1?hello
 
@@ -48,7 +48,7 @@ final class Router
 		$controller = explode('@', $arguments)[0];
 
 		// splits args by the '@', selects the last index: 'index?1?hello'
-		// the it's split by '?', selecting the first index: 'index'
+		// then it's split by '?', selecting the first index: 'index'
 		$action = explode('?', explode('@', $arguments)[1])[0];
 
 		// splits args by '?': [home@index, 1, hello]
