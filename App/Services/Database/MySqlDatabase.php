@@ -15,24 +15,28 @@ use Exception;
 class MySqlDatabase extends Database
 {
     /**
-     * @var string The host who's connecting.
+     * The host who's connecting.
+     * @var string
      */
-    private string $hostname;
+    private readonly string $hostname;
 
     /**
-     * @var string The user who's connecting.
+     * The user who's connecting.
+     * @var string
      */
-    private string $username;
+    private readonly string $username;
 
     /**
-     * @var string The password of the user connecting.
+     * The password of the user connecting.
+     * @var string
      */
-    private string $password;
+    private readonly string $password;
 
     /**
-     * @var string The name of the database to connect to.
+     * The name of the database to connect to.
+     * @var string
      */
-    private string $database;
+    private readonly string $database;
 
     /**
      * Initalizes a new instance of the MySqlDatabase class.

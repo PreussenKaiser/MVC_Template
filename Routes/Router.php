@@ -7,7 +7,7 @@ namespace Routes;
  * 
  * @author PreussenKaiser
  */
-class Router
+final class Router
 {
 	/**
 	 * Assigns request properties.
@@ -25,7 +25,6 @@ class Router
 		// when there are no arguments
 		if ($args == PROJECT_NAME) {
 			$request->setProperties();
-
 
 			return;
 		}

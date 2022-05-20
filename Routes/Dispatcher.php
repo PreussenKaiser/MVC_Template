@@ -10,7 +10,7 @@ use Core\Exceptions\UnknownRequestException;
  * 
  * @author PreussenKaiser
  */
-class Dispatcher
+final class Dispatcher
 {
 	/**
 	 * Parses the current request.

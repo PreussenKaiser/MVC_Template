@@ -10,14 +10,16 @@ namespace App\Models;
 final class Note
 {
     /**
-     * @var int The unique identifer of the note.
+     * The unique identifer of the note.
+     * @var int
      */
-    private int $id;
+    private readonly int $id;
 
     /**
-     * @var string The notes content.
+     * The notes content.
+     * @var string
      */
-    private string $content;
+    private readonly string $content;
 
     /**
      * Initializes a new instance of the Note model.

@@ -17,12 +17,12 @@ use Exception;
  * 
  * @author PreussenKaiser
  */
-class Request
+final class Request
 {
     /**
 	 * @var string The url for the request.
 	 */
-    private string $url;
+    private readonly string $url;
 
 	/**
 	 * Represents the request's controller.
@@ -34,7 +34,8 @@ class Request
     private Controller|string $controller;
 
 	/**
-	 * @var string The action to execute in a controller.
+	 * The action to execute in a controller.
+	 * @var string
 	 */
 	private string $action;
 

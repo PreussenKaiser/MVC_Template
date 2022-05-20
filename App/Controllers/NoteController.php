@@ -15,7 +15,8 @@ use App\Models\Note;
 final class NoteController extends Controller
 {
     /**
-     * @var NoteServiceInterface The service to query notes with.
+     * The service to query notes with.
+     * @var NoteServiceInterface
      */
     private readonly NoteServiceInterface $note_service;
 

@@ -10,7 +10,7 @@ namespace Routes;
  * 
  * @author PreussenKaiser
  */
-class Server
+final class Server
 {
 	/**
 	 * Finds out what directory path to use.

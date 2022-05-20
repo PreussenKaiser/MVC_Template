@@ -13,9 +13,10 @@ use PDO;
 abstract class Database
 {
 	/**
-	 * @var string The table to query.
+	 * The table to query.
+	 * @var string
 	 */
-	public string $table;
+	public readonly string $table;
 
     /**
      * @var PDO The connection to establish.

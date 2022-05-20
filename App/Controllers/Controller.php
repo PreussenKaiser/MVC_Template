@@ -17,19 +17,22 @@ use Core\Logging\Logger;
 abstract class Controller
 {
     /**
-	 * @var View The view for the controller.
+	 * The view for the controller.
+	 * @var View
 	 */
-    protected View $view;
+    protected readonly View $view;
 
 	/**
-	 * @var Logger The logger to log controller processes.
+	 * The logger to log controller processes.
+	 * @var Logger
 	 */
-	protected LoggerInterface $logger;
+	protected readonly LoggerInterface $logger;
 
 	/**
-	 * @var string The folder to get views from.
+	 * The folder to get views from.
+	 * @var string
 	 */
-	protected string $view_folder;
+	protected readonly string $view_folder;
 
 	/**
 	 * Initializes a new instance of the Controller class.

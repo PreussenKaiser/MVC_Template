@@ -6,11 +6,14 @@ use Core\Validation\Inputs\Input;
 
 /**
  * The class that contains validation helper methods.
+ * 
+ * @author PreussenKaiser
  */
-class Form
+final class Form
 {
 	/**
-	 * @var array The inputs in the form.
+	 * The inputs in the form.
+	 * @var array
 	 */
 	private array $inputs;
 
@@ -40,7 +43,7 @@ class Form
 	 */
 	public function addInput(Input $input): self
 	{
-		$this->inputs[] = $input;
+		array_push($this->inputs, $input);
 
 		return $this;
 	}

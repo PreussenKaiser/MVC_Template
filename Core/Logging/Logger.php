@@ -22,14 +22,16 @@ final class Logger implements LoggerInterface
     private static ?Logger $instance = null;
 
     /**
-     * @var Database The database to log to.
+     * The database to log to.
+     * @var Database
      */
-    private Database $database;
+    private readonly Database $database;
 
     /**
-	 * @var string The table to store logs in.
+     * The table to store logs in.
+	 * @var string
 	 */
-    private string $table_name;
+    private readonly string $table_name;
 
 	/**
 	 * Initializes a new instance of the Logger singleton.
